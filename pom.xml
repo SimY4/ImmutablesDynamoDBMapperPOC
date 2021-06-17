@@ -26,7 +26,7 @@
         <springdoc-openapi.version>1.5.9</springdoc-openapi.version>
         <immutables.version>2.9.0-beta2</immutables.version>
 
-        <spotless.version>2.12.0</spotless.version>
+        <spotless.version>2.12.1</spotless.version>
 
         <docker-maven-plugin.version>0.36.0</docker-maven-plugin.version>
     </properties>
