@@ -29,19 +29,20 @@ class EntityControllerIT {
 
   private static final String TENANT_ID = UUID.randomUUID().toString();
   private static final String CHANGE_ENTITY_PAYLOAD =
-      "{"
-          + "  \"name\":\"name\","
-          + "  \"address\":{"
-          + "    \"line1\":\"123 example st\","
-          + "    \"country\":\"Australia\""
-          + "  },"
-          + "  \"emails\":[{"
-          + "    \"email\":\"123@example.com\","
-          + "    \"verified\":true,"
-          + "    \"primary\":true"
-          + "  }],"
-          + "  \"status\": \"active\""
-          + "}";
+      """
+          {
+            "name": "name",
+            "address": {
+              "line1": "123 example st",
+              "country": "Australia"
+            },
+            "emails": [{
+              "email": "123@example.com",
+              "verified": true,
+              "primary": true
+            }],
+            "status": "active"
+          }""";
 
   @Autowired private WebApplicationContext webApplicationContext;
   @Autowired private ObjectMapper objectMapper;
