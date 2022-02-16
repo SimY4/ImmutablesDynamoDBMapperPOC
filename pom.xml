@@ -202,7 +202,7 @@
                     <autoPull>always</autoPull>
                     <images>
                         <image>
-                            <name>localstack/localstack:0.13.0.4</name>
+                            <name>localstack/localstack:0.14.0</name>
                             <run>
                                 <env>
                                     <SERVICES>dynamodb</SERVICES>
