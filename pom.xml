@@ -199,7 +199,7 @@
                     <showLogs>true</showLogs>
                     <useColor>true</useColor>
                     <verbose>true</verbose>
-                    <autoPull>always</autoPull>
+                    <imagePullPolicy>always</imagePullPolicy>
                     <images>
                         <image>
                             <name>localstack/localstack:0.14.0</name>
