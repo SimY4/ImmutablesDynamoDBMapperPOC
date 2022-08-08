@@ -180,7 +180,7 @@
           <imagePullPolicy>always</imagePullPolicy>
           <images>
             <image>
-              <name>localstack/localstack:0.14.0</name>
+              <name>localstack/localstack:1.0.3</name>
               <run>
                 <env>
                   <SERVICES>dynamodb</SERVICES>
