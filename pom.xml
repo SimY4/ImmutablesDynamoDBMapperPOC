@@ -23,7 +23,7 @@
     <java.version>17</java.version>
 
     <springdoc-openapi.version>1.6.10</springdoc-openapi.version>
-    <immutables.version>2.9.0</immutables.version>
+    <immutables.version>2.9.1</immutables.version>
 
     <spotless.version>2.24.1</spotless.version>
 
