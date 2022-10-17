@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
 
-    <springdoc-openapi.version>1.6.11</springdoc-openapi.version>
+    <springdoc-openapi.version>1.6.12</springdoc-openapi.version>
     <immutables.version>2.9.2</immutables.version>
 
     <spotless.version>2.27.2</spotless.version>
