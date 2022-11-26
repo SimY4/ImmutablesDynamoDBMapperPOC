@@ -1,9 +1,8 @@
 package com.github.simy4.poc.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.validation.Valid;
 import org.immutables.value.Value;
-
-import javax.validation.Valid;
 
 import java.util.List;
 
