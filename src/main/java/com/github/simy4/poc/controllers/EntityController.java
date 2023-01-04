@@ -103,6 +103,6 @@ public class EntityController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteEntity(
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
-    crudRepository.get(Entity.id(tenant, id)).ifPresent(crudRepository::delete);
+    crudRepository.delete(Entity.id(tenant, id));
   }
 }

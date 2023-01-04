@@ -14,17 +14,7 @@ springdoc.swagger-ui.path: /
 
 management.server.port: 9001
 
-cloud.aws.stack.auto: false
-
 db.entities.table-name: ${ENTITIES_TABLE:entities-table}
 
 ---
 spring.config.activate.on-profile: local
-
-cloud.aws:
-  credentials:
-    access-key: test
-    secret-key: test
-  region.static: us-east-1
-
-aws.local.endpoint: http://localhost:4566
