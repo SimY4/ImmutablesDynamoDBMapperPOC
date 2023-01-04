@@ -1,6 +1,8 @@
 package com.github.simy4.poc.repositories;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
 import com.github.simy4.poc.model.ModifiableEntity;
@@ -38,7 +40,8 @@ public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
   }
 
   @Override
-  public final void delete(Entity entity) {
-    dynamoDBMapper.delete(entity);
+  public final void delete(Identity id) {
+    dynamoDBMapper.delete(
+        fromId(id), DynamoDBMapperConfig.builder().withSaveBehavior(SaveBehavior.CLOBBER).build());
   }
 }

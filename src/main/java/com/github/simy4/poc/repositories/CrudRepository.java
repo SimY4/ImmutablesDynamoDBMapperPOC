@@ -7,5 +7,5 @@ public interface CrudRepository<A, Id> {
 
   Optional<A> get(Id id);
 
-  void delete(A a);
+  void delete(Id id);
 }
