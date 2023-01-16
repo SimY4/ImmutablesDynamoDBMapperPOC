@@ -29,7 +29,7 @@
 
     <testcontainers.version>1.17.6</testcontainers.version>
 
-    <spotless.version>2.29.0</spotless.version>
+    <spotless.version>2.30.0</spotless.version>
     <docker-maven-plugin.version>0.40.3</docker-maven-plugin.version>
   </properties>
 
