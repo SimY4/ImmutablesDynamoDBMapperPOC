@@ -15,11 +15,9 @@ class ArchUnitTest {
   static final String ROOT_PACKAGE = "com.github.simy4.poc";
 
   @ArchTest
-  ArchRule noGenericExceptions =
-      GeneralCodingRules.NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
+  ArchRule noGenericExceptions = GeneralCodingRules.NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS;
 
-  @ArchTest
-  ArchRule noFieldInjection = GeneralCodingRules.NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
+  @ArchTest ArchRule noFieldInjection = GeneralCodingRules.NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
 
   @ArchTest
   ArchRule layeredArchitecture =
