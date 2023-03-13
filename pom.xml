@@ -24,7 +24,7 @@
 
     <aws-java-sdk.version>1.12.420</aws-java-sdk.version>
 
-    <springdoc-openapi.version>1.6.14</springdoc-openapi.version>
+    <springdoc-openapi.version>1.6.15</springdoc-openapi.version>
     <immutables.version>2.9.3</immutables.version>
 
     <testcontainers.version>1.17.6</testcontainers.version>
