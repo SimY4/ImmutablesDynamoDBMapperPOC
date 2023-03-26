@@ -16,12 +16,12 @@ import org.testcontainers.utility.DockerImageName;
 public class LocalstackConfiguration {
   @Bean(initMethod = "start", destroyMethod = "stop")
   public LocalStackContainer localStackContainer() {
-    return new LocalStackContainer(DockerImageName.parse("localstack/localstack:1.3.1"))
+    return new LocalStackContainer(DockerImageName.parse("localstack/localstack:1.4.0"), false)
         .withServices(Service.DYNAMODB);
   }
 
-  @Bean
   @Primary
+  @Bean(destroyMethod = "shutdown")
   public AmazonDynamoDBAsync localStackDynamoDB(LocalStackContainer localStackContainer) {
     return AmazonDynamoDBAsyncClientBuilder.standard()
         .withCredentials(

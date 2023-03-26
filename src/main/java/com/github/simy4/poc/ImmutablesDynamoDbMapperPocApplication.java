@@ -40,7 +40,7 @@ public class ImmutablesDynamoDbMapperPocApplication {
   }
 
   @Lazy
-  @Bean
+  @Bean(destroyMethod = "shutdown")
   public AmazonDynamoDBAsync dynamoDB(
       AWSCredentialsProvider awsCredentialsProvider, AwsRegionProvider regionProvider) {
     return AmazonDynamoDBAsyncClientBuilder.standard()
