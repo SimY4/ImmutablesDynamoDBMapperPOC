@@ -34,6 +34,7 @@ public class ImmutablesDynamoDbMapperPocApplication {
     return DefaultAWSCredentialsProviderChain.getInstance();
   }
 
+  @Lazy
   @Bean
   public AwsRegionProvider awsRegionProvider() {
     return new DefaultAwsRegionProviderChain();

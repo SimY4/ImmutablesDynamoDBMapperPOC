@@ -1,5 +1,6 @@
 package com.github.simy4.poc;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -20,18 +21,31 @@ public class LocalstackConfiguration {
         .withServices(Service.DYNAMODB);
   }
 
+  @Bean
+  @Primary
+  public AWSCredentialsProvider localstackCredentialsProvider(
+      LocalStackContainer localStackContainer) {
+    return new AWSStaticCredentialsProvider(
+        new BasicAWSCredentials(
+            localStackContainer.getAccessKey(), localStackContainer.getSecretKey()));
+  }
+
+  @Bean
+  @Primary
+  public EndpointConfiguration localstackEndpointConfiguration(
+      LocalStackContainer localStackContainer) {
+    return new EndpointConfiguration(
+        localStackContainer.getEndpointOverride(Service.DYNAMODB).toString(),
+        localStackContainer.getRegion());
+  }
+
   @Primary
   @Bean(destroyMethod = "shutdown")
-  public AmazonDynamoDBAsync localStackDynamoDB(LocalStackContainer localStackContainer) {
+  public AmazonDynamoDBAsync localStackDynamoDB(
+      AWSCredentialsProvider credentialsProvider, EndpointConfiguration endpointConfiguration) {
     return AmazonDynamoDBAsyncClientBuilder.standard()
-        .withCredentials(
-            new AWSStaticCredentialsProvider(
-                new BasicAWSCredentials(
-                    localStackContainer.getAccessKey(), localStackContainer.getSecretKey())))
-        .withEndpointConfiguration(
-            new EndpointConfiguration(
-                localStackContainer.getEndpointOverride(Service.DYNAMODB).toString(),
-                localStackContainer.getRegion()))
+        .withCredentials(credentialsProvider)
+        .withEndpointConfiguration(endpointConfiguration)
         .build();
   }
 }
