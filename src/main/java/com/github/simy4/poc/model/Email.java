@@ -1,18 +1,31 @@
 package com.github.simy4.poc.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.github.simy4.poc.model.converters.DynamoDBTypeConverterIso;
 import org.immutables.value.Value;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 @Data
 @Value.Immutable
-@Value.Modifiable
-@DynamoDBDocument
-@DynamoDBTypeConverted(converter = Email.Converter.class)
 @JsonDeserialize(as = ImmutableEmail.class)
 public interface Email {
+  static TableSchema<ImmutableEmail> schema() {
+    return TableSchema.builder(ImmutableEmail.class, ImmutableEmail.Builder.class)
+        .newItemBuilder(ImmutableEmail::builder, ImmutableEmail.Builder::build)
+        .addAttribute(
+            String.class,
+            a -> a.name("email").getter(Email::getEmail).setter(ImmutableEmail.Builder::email))
+        .addAttribute(
+            Boolean.class,
+            a ->
+                a.name("verified")
+                    .getter(Email::isVerified)
+                    .setter(ImmutableEmail.Builder::verified))
+        .addAttribute(
+            Boolean.class,
+            a -> a.name("primary").getter(Email::isPrimary).setter(ImmutableEmail.Builder::primary))
+        .build();
+  }
+
   @jakarta.validation.constraints.Email
   @Value.Parameter
   @Value.Redacted
@@ -26,11 +39,5 @@ public interface Email {
   @Value.Default
   default boolean isPrimary() {
     return false;
-  }
-
-  final class Converter extends DynamoDBTypeConverterIso<ModifiableEmail, ImmutableEmail> {
-    public Converter() {
-      super(email -> new ModifiableEmail().from(email), ModifiableEmail::toImmutable);
-    }
   }
 }

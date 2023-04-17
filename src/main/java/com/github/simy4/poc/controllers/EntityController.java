@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /** Sample CRUD REST controller. */
 @RestController
@@ -51,14 +52,20 @@ public class EntityController {
               headers = {@Header(name = HttpHeaders.ETAG), @Header(name = HttpHeaders.LOCATION)}))
   public ResponseEntity<Entity> createEntity(
       @RequestHeader("X-tenant-id") String tenant, @Valid @RequestBody CreateEntity entity) {
-    var created = crudRepository.save(entity.toEntity(tenant));
-    return ResponseEntity.created(
-            ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(created.getId().getSk())
-                .toUri())
-        .eTag(Objects.toString(created.getVersion(), "0"))
-        .body(created);
+    ServletUriComponentsBuilder componentsBuilder =
+        ServletUriComponentsBuilder.fromCurrentRequest();
+    return crudRepository
+        .save(entity.toEntity(tenant))
+        .thenApply(
+            created ->
+                ResponseEntity.created(
+                        componentsBuilder
+                            .path("/{id}")
+                            .buildAndExpand(created.getId().getSk())
+                            .toUri())
+                    .eTag(Objects.toString(created.getVersion(), "0"))
+                    .body(created))
+        .join();
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -73,8 +80,14 @@ public class EntityController {
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
     return crudRepository
         .get(Entity.id(tenant, id))
-        .map(e -> ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+        .thenApply(
+            maybeEntity ->
+                maybeEntity
+                    .map(
+                        e ->
+                            ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
+                    .orElseGet(() -> ResponseEntity.notFound().build()))
+        .join();
   }
 
   @PatchMapping(
@@ -94,15 +107,27 @@ public class EntityController {
       @Valid @RequestBody UpdateEntity entity) {
     return crudRepository
         .get(Entity.id(tenant, id))
-        .map(e -> crudRepository.save(entity.patch(e)))
-        .map(e -> ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+        .thenCompose(
+            maybeEntity ->
+                maybeEntity
+                    .map(
+                        e ->
+                            crudRepository
+                                .save(entity.patch(e))
+                                .thenApply(
+                                    updated ->
+                                        ResponseEntity.ok()
+                                            .eTag(Objects.toString(updated.getVersion(), "0"))
+                                            .body(updated)))
+                    .orElseGet(
+                        () -> CompletableFuture.completedFuture(ResponseEntity.notFound().build())))
+        .join();
   }
 
   @DeleteMapping(path = "{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteEntity(
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
-    crudRepository.delete(Entity.id(tenant, id));
+    crudRepository.delete(Entity.id(tenant, id)).join();
   }
 }

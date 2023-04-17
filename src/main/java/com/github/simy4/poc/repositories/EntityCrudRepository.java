@@ -1,47 +1,42 @@
 package com.github.simy4.poc.repositories;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
-import com.github.simy4.poc.model.ModifiableEntity;
+import com.github.simy4.poc.model.ImmutableEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 @Repository
 public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
-  private final DynamoDBMapper dynamoDBMapper;
+  private final DynamoDbAsyncTable<ImmutableEntity> dynamoDBTable;
 
   @Autowired
-  public EntityCrudRepository(DynamoDBMapper dynamoDBMapper) {
-    this.dynamoDBMapper = dynamoDBMapper;
+  public EntityCrudRepository(DynamoDbAsyncTable<ImmutableEntity> entityTable) {
+    this.dynamoDBTable = entityTable;
   }
 
-  protected ModifiableEntity fromId(Identity id) {
-    var keyObject = new ModifiableEntity();
-    keyObject.setPk(id.getPk());
-    keyObject.setSk(id.getSk());
-    return keyObject;
+  protected Key fromId(Identity id) {
+    return Key.builder().partitionValue(id.getPk()).sortValue(id.getSk()).build();
   }
 
   @Override
-  public final Entity save(Entity entity) {
-    var modifiable = new ModifiableEntity().from(entity);
-    dynamoDBMapper.save(modifiable);
-    return modifiable.toImmutable();
+  public final CompletableFuture<Entity> save(Entity entity) {
+    return dynamoDBTable.updateItem(ImmutableEntity.copyOf(entity)).thenApply(Function.identity());
   }
 
   @Override
-  public final Optional<Entity> get(Identity id) {
-    return Optional.ofNullable(dynamoDBMapper.load(fromId(id))).map(ModifiableEntity::toImmutable);
+  public final CompletableFuture<Optional<Entity>> get(Identity id) {
+    return dynamoDBTable.getItem(fromId(id)).thenApply(Optional::ofNullable);
   }
 
   @Override
-  public final void delete(Identity id) {
-    dynamoDBMapper.delete(
-        fromId(id), DynamoDBMapperConfig.builder().withSaveBehavior(SaveBehavior.CLOBBER).build());
+  public final CompletableFuture<Void> delete(Identity id) {
+    return dynamoDBTable.deleteItem(fromId(id)).thenApply(ignored -> null);
   }
 }
