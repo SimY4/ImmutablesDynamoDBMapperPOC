@@ -10,7 +10,9 @@ logging:
     com.github.simy4.poc: DEBUG
     org.springframework: WARN
 
-springdoc.swagger-ui.path: /
+springdoc:
+  packages-to-scan: com.github.simy4.poc.controllers
+  swagger-ui.path: /
 
 management.server.port: 9001
 
