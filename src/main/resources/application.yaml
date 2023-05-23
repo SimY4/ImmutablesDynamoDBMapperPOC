@@ -20,3 +20,10 @@ db.entities.table-name: ${ENTITIES_TABLE:entities-table}
 
 ---
 spring.config.activate.on-profile: local
+
+spring.cloud.aws:
+  dynamodb.endpoint: http://localhost:4566
+  region.static: us-east-1
+  credentials:
+    access-key: test
+    secret-key: test
