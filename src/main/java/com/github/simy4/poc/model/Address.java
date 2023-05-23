@@ -9,8 +9,8 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableAddress.class)
 public interface Address {
-  static TableSchema<ImmutableAddress> schema() {
-    return TableSchema.builder(ImmutableAddress.class, ImmutableAddress.Builder.class)
+  static TableSchema<Address> schema() {
+    return TableSchema.builder(Address.class, ImmutableAddress.Builder.class)
         .newItemBuilder(ImmutableAddress::builder, ImmutableAddress.Builder::build)
         .addAttribute(
             String.class,

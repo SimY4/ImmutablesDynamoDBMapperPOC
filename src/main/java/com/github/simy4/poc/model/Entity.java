@@ -21,8 +21,8 @@ import java.util.UUID;
 public abstract class Entity {
   public static final String PK_PREFIX = "Entity#";
 
-  public static TableSchema<ImmutableEntity> schema() {
-    return TableSchema.builder(ImmutableEntity.class, ImmutableEntity.Builder.class)
+  public static TableSchema<Entity> schema() {
+    return TableSchema.builder(Entity.class, ImmutableEntity.Builder.class)
         .newItemBuilder(ImmutableEntity::builder, ImmutableEntity.Builder::build)
         .addAttribute(
             String.class,
@@ -31,16 +31,16 @@ public abstract class Entity {
             String.class,
             a -> a.name("name").getter(Entity::getName).setter(ImmutableEntity.Builder::name))
         .addAttribute(
-            EnhancedType.documentOf(ImmutableAddress.class, Address.schema()),
+            EnhancedType.documentOf(Address.class, Address.schema()),
             a ->
                 a.name("address")
                     .getter(e -> ImmutableAddress.copyOf(e.getAddress()))
                     .setter(ImmutableEntity.Builder::address))
         .addAttribute(
-            EnhancedType.listOf(EnhancedType.documentOf(ImmutableEmail.class, Email.schema())),
+            EnhancedType.listOf(EnhancedType.documentOf(Email.class, Email.schema())),
             a ->
                 a.name("email")
-                    .getter(e -> e.getEmails().stream().map(ImmutableEmail::copyOf).toList())
+                    .getter(Entity::getEmails)
                     .setter(ImmutableEntity.Builder::addAllEmails))
         .addAttribute(
             Status.class,

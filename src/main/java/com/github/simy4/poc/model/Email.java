@@ -8,8 +8,8 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableEmail.class)
 public interface Email {
-  static TableSchema<ImmutableEmail> schema() {
-    return TableSchema.builder(ImmutableEmail.class, ImmutableEmail.Builder.class)
+  static TableSchema<Email> schema() {
+    return TableSchema.builder(Email.class, ImmutableEmail.Builder.class)
         .newItemBuilder(ImmutableEmail::builder, ImmutableEmail.Builder::build)
         .addAttribute(
             String.class,

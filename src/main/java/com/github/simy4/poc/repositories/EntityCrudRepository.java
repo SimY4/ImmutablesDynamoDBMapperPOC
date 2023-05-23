@@ -2,7 +2,6 @@ package com.github.simy4.poc.repositories;
 
 import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
-import com.github.simy4.poc.model.ImmutableEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
@@ -14,10 +13,10 @@ import java.util.function.Function;
 
 @Repository
 public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
-  private final DynamoDbAsyncTable<ImmutableEntity> dynamoDBTable;
+  private final DynamoDbAsyncTable<Entity> dynamoDBTable;
 
   @Autowired
-  public EntityCrudRepository(DynamoDbAsyncTable<ImmutableEntity> entityTable) {
+  public EntityCrudRepository(DynamoDbAsyncTable<Entity> entityTable) {
     this.dynamoDBTable = entityTable;
   }
 
@@ -27,7 +26,7 @@ public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
 
   @Override
   public final CompletableFuture<Entity> save(Entity entity) {
-    return dynamoDBTable.updateItem(ImmutableEntity.copyOf(entity)).thenApply(Function.identity());
+    return dynamoDBTable.updateItem(entity).thenApply(Function.identity());
   }
 
   @Override
@@ -37,6 +36,6 @@ public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
 
   @Override
   public final CompletableFuture<Void> delete(Identity id) {
-    return dynamoDBTable.deleteItem(fromId(id)).thenApply(ignored -> null);
+    return dynamoDBTable.deleteItem(fromId(id)).thenRun(() -> {});
   }
 }

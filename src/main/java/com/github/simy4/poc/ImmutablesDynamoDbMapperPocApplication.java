@@ -1,7 +1,6 @@
 package com.github.simy4.poc;
 
 import com.github.simy4.poc.model.Entity;
-import com.github.simy4.poc.model.ImmutableEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -84,7 +83,7 @@ public class ImmutablesDynamoDbMapperPocApplication {
   }
 
   @Bean
-  public DynamoDbAsyncTable<ImmutableEntity> entityTable(
+  public DynamoDbAsyncTable<Entity> entityTable(
       DynamoDbEnhancedAsyncClient dynamoDBEnhancedClient,
       @Value("${db.entities.table-name}") String tableName) {
     return dynamoDBEnhancedClient.table(tableName, Entity.schema());
@@ -93,7 +92,7 @@ public class ImmutablesDynamoDbMapperPocApplication {
   @Bean
   @Profile("local")
   public ApplicationRunner dynamoDBInitializer(
-      DynamoDbAsyncClient dynamoDB, DynamoDbAsyncTable<ImmutableEntity> entityTable) {
+      DynamoDbAsyncClient dynamoDB, DynamoDbAsyncTable<Entity> entityTable) {
     return args -> {
       entityTable
           .createTable(
