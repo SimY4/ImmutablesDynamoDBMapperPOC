@@ -17,7 +17,7 @@ import org.testcontainers.utility.DockerImageName;
 public class LocalstackConfiguration {
   @Bean(initMethod = "start", destroyMethod = "stop")
   public LocalStackContainer localStackContainer() {
-    return new LocalStackContainer(DockerImageName.parse("localstack/localstack:2.0.2"))
+    return new LocalStackContainer(DockerImageName.parse("localstack/localstack:2.1.0"))
         .withServices(Service.DYNAMODB);
   }
 
