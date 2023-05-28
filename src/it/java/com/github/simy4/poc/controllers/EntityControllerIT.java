@@ -1,6 +1,5 @@
 package com.github.simy4.poc.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.simy4.poc.IntegrationTest;
 import com.github.simy4.poc.model.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,20 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @IntegrationTest
 class EntityControllerIT {
@@ -44,29 +32,25 @@ class EntityControllerIT {
             "status": "active"
           }""";
 
-  @Autowired private WebApplicationContext webApplicationContext;
-  @Autowired private ObjectMapper objectMapper;
-
-  private MockMvc mockMvc;
-
-  @BeforeEach
-  void setUp() {
-    mockMvc = webAppContextSetup(webApplicationContext).build();
-  }
+  @Autowired private WebTestClient client;
 
   @Test
-  void testCreateEntity() throws Exception {
-    mockMvc
-        .perform(
-            post("/v1/entities")
-                .header("X-tenant-id", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(CHANGE_ENTITY_PAYLOAD))
-        .andExpect(status().isCreated())
-        .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
-        .andExpect(header().exists(HttpHeaders.LOCATION))
-        .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
+  void testCreateEntity() {
+    client
+        .post()
+        .uri("/v1/entities")
+        .header("X-tenant-id", TENANT_ID)
+        .accept(MediaType.APPLICATION_JSON)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(CHANGE_ENTITY_PAYLOAD)
+        .exchange()
+        .expectAll(
+            e -> e.expectStatus().isCreated(),
+            e -> e.expectHeader().valueEquals(HttpHeaders.ETAG, "\"1\""),
+            e -> e.expectHeader().exists(HttpHeaders.LOCATION))
+        .expectBody()
+        .json(CHANGE_ENTITY_PAYLOAD, false)
+        .returnResult();
   }
 
   @Nested
@@ -74,67 +58,74 @@ class EntityControllerIT {
     private Entity entity;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
       entity =
-          objectMapper.readValue(
-              mockMvc
-                  .perform(
-                      post("/v1/entities")
-                          .header("X-tenant-id", TENANT_ID)
-                          .accept(MediaType.APPLICATION_JSON)
-                          .contentType(MediaType.APPLICATION_JSON)
-                          .content(CHANGE_ENTITY_PAYLOAD))
-                  .andExpect(status().isCreated())
-                  .andReturn()
-                  .getResponse()
-                  .getContentAsString(StandardCharsets.UTF_8),
-              Entity.class);
+          client
+              .post()
+              .uri("/v1/entities")
+              .header("X-tenant-id", TENANT_ID)
+              .accept(MediaType.APPLICATION_JSON)
+              .contentType(MediaType.APPLICATION_JSON)
+              .bodyValue(CHANGE_ENTITY_PAYLOAD)
+              .exchange()
+              .expectBody(Entity.class)
+              .returnResult()
+              .getResponseBody();
     }
 
     @Test
-    void testReadEntity() throws Exception {
-      mockMvc
-          .perform(
-              get("/v1/entities/{id}", entity.getId().getSk())
-                  .header("X-tenant-id", TENANT_ID)
-                  .accept(MediaType.APPLICATION_JSON))
-          .andExpect(status().isOk())
-          .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
-          .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
-      mockMvc
-          .perform(
-              get("/v1/entities/{id}", entity.getId().getSk())
-                  .header("X-tenant-id", "wrong-tenant")
-                  .accept(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound());
+    void testReadEntity() {
+      client
+          .get()
+          .uri("/v1/entities/{id}", entity.getId().getSk())
+          .header("X-tenant-id", TENANT_ID)
+          .accept(MediaType.APPLICATION_JSON)
+          .exchange()
+          .expectAll(
+              e -> e.expectStatus().isOk(),
+              e -> e.expectHeader().valueEquals(HttpHeaders.ETAG, "\"1\""))
+          .expectBody()
+          .json(CHANGE_ENTITY_PAYLOAD, false);
+      client
+          .get()
+          .uri("/v1/entities/{id}", entity.getId().getSk())
+          .header("X-tenant-id", "wrong-tenant")
+          .accept(MediaType.APPLICATION_JSON)
+          .exchange()
+          .expectStatus()
+          .isNotFound()
+          .expectBody()
+          .isEmpty();
     }
 
     @Test
-    void testUpdateEntity() throws Exception {
-      mockMvc
-          .perform(
-              patch("/v1/entities/{id}", entity.getId().getSk())
-                  .header("X-tenant-id", TENANT_ID)
-                  .accept(MediaType.APPLICATION_JSON)
-                  .contentType(MediaType.APPLICATION_JSON)
-                  .content("{\"name\":\"other-name\"}"))
-          .andExpect(status().isOk())
-          .andExpect(content().json("{\"name\":\"other-name\"}", false));
+    void testUpdateEntity() {
+      client
+          .patch()
+          .uri("/v1/entities/{id}", entity.getId().getSk())
+          .header("X-tenant-id", TENANT_ID)
+          .accept(MediaType.APPLICATION_JSON)
+          .contentType(MediaType.APPLICATION_JSON)
+          .bodyValue("{\"name\":\"other-name\"}")
+          .exchange()
+          .expectStatus()
+          .isOk()
+          .expectBody()
+          .json("{\"name\":\"other-name\"}", false);
     }
 
     @Test
-    void testDeleteEntity() throws Exception {
-      mockMvc
-          .perform(
-              delete("/v1/entities/{id}", entity.getId().getSk()).header("X-tenant-id", TENANT_ID))
-          .andExpect(status().isNoContent());
-
-      mockMvc
-          .perform(
-              get("/v1/entities/{id}", entity.getId().getSk())
-                  .header("X-tenant-id", TENANT_ID)
-                  .accept(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound());
+    void testDeleteEntity() {
+      client
+          .delete()
+          .uri("/v1/entities/{id}", entity.getId().getSk())
+          .header("X-tenant-id", TENANT_ID)
+          .accept(MediaType.APPLICATION_JSON)
+          .exchange()
+          .expectStatus()
+          .isNoContent()
+          .expectBody()
+          .isEmpty();
     }
   }
 }

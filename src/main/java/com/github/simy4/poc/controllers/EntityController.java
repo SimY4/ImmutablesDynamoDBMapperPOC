@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /** Sample CRUD REST controller. */
 @RestController
@@ -50,13 +50,12 @@ public class EntityController {
           @ApiResponse(
               responseCode = "201",
               headers = {@Header(name = HttpHeaders.ETAG), @Header(name = HttpHeaders.LOCATION)}))
-  public ResponseEntity<Entity> createEntity(
-      @RequestHeader("X-tenant-id") String tenant, @Valid @RequestBody CreateEntity entity) {
-    ServletUriComponentsBuilder componentsBuilder =
-        ServletUriComponentsBuilder.fromCurrentRequest();
-    return crudRepository
-        .save(entity.toEntity(tenant))
-        .thenApply(
+  public Mono<ResponseEntity<Entity>> createEntity(
+      @RequestHeader("X-tenant-id") String tenant,
+      @Valid @RequestBody CreateEntity entity,
+      UriComponentsBuilder componentsBuilder) {
+    return Mono.fromFuture(crudRepository.save(entity.toEntity(tenant)))
+        .map(
             created ->
                 ResponseEntity.created(
                         componentsBuilder
@@ -64,8 +63,7 @@ public class EntityController {
                             .buildAndExpand(created.getId().getSk())
                             .toUri())
                     .eTag(Objects.toString(created.getVersion(), "0"))
-                    .body(created))
-        .join();
+                    .body(created));
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,18 +74,12 @@ public class EntityController {
             headers = {@Header(name = HttpHeaders.ETAG)}),
         @ApiResponse(responseCode = "404", content = @Content)
       })
-  public ResponseEntity<Entity> getEntity(
+  public Mono<ResponseEntity<Entity>> getEntity(
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
-    return crudRepository
-        .get(Entity.id(tenant, id))
-        .thenApply(
-            maybeEntity ->
-                maybeEntity
-                    .map(
-                        e ->
-                            ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
-                    .orElseGet(() -> ResponseEntity.notFound().build()))
-        .join();
+    return Mono.fromFuture(crudRepository.get(Entity.id(tenant, id)))
+        .flatMap(Mono::justOrEmpty)
+        .map(e -> ResponseEntity.ok().eTag(Objects.toString(e.getVersion(), "0")).body(e))
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
 
   @PatchMapping(
@@ -101,33 +93,23 @@ public class EntityController {
             headers = {@Header(name = HttpHeaders.ETAG)}),
         @ApiResponse(responseCode = "404", content = @Content)
       })
-  public ResponseEntity<Entity> updateEntity(
+  public Mono<ResponseEntity<Entity>> updateEntity(
       @RequestHeader("X-tenant-id") String tenant,
       @PathVariable("id") String id,
       @Valid @RequestBody UpdateEntity entity) {
-    return crudRepository
-        .get(Entity.id(tenant, id))
-        .thenCompose(
-            maybeEntity ->
-                maybeEntity
-                    .map(
-                        e ->
-                            crudRepository
-                                .save(entity.patch(e))
-                                .thenApply(
-                                    updated ->
-                                        ResponseEntity.ok()
-                                            .eTag(Objects.toString(updated.getVersion(), "0"))
-                                            .body(updated)))
-                    .orElseGet(
-                        () -> CompletableFuture.completedFuture(ResponseEntity.notFound().build())))
-        .join();
+    return Mono.fromFuture(crudRepository.get(Entity.id(tenant, id)))
+        .flatMap(Mono::justOrEmpty)
+        .flatMap(e -> Mono.fromFuture(crudRepository.save(entity.patch(e))))
+        .map(
+            updated ->
+                ResponseEntity.ok().eTag(Objects.toString(updated.getVersion(), "0")).body(updated))
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
 
   @DeleteMapping(path = "{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteEntity(
+  public Mono<Void> deleteEntity(
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
-    crudRepository.delete(Entity.id(tenant, id)).join();
+    return Mono.fromFuture(crudRepository.delete(Entity.id(tenant, id)));
   }
 }
