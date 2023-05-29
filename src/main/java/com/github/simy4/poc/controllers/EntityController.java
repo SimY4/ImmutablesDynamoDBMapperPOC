@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Objects;
 
@@ -50,13 +50,12 @@ public class EntityController {
               responseCode = "201",
               headers = {@Header(name = HttpHeaders.ETAG), @Header(name = HttpHeaders.LOCATION)}))
   public ResponseEntity<Entity> createEntity(
-      @RequestHeader("X-tenant-id") String tenant, @Valid @RequestBody CreateEntity entity) {
+      @RequestHeader("X-tenant-id") String tenant,
+      @Valid @RequestBody CreateEntity entity,
+      UriComponentsBuilder componentsBuilder) {
     var created = crudRepository.save(entity.toEntity(tenant));
     return ResponseEntity.created(
-            ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(created.getId().getSk())
-                .toUri())
+            componentsBuilder.path("/{id}").buildAndExpand(created.getId().getSk()).toUri())
         .eTag(Objects.toString(created.getVersion(), "0"))
         .body(created);
   }

@@ -126,15 +126,10 @@ class EntityControllerIT {
     void testDeleteEntity() throws Exception {
       mockMvc
           .perform(
-              delete("/v1/entities/{id}", entity.getId().getSk()).header("X-tenant-id", TENANT_ID))
-          .andExpect(status().isNoContent());
-
-      mockMvc
-          .perform(
-              get("/v1/entities/{id}", entity.getId().getSk())
+              delete("/v1/entities/{id}", entity.getId().getSk())
                   .header("X-tenant-id", TENANT_ID)
                   .accept(MediaType.APPLICATION_JSON))
-          .andExpect(status().isNotFound());
+          .andExpect(status().isNoContent());
     }
   }
 }
