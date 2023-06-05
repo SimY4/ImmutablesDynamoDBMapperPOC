@@ -27,7 +27,7 @@
     <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
     <immutables.version>2.9.3</immutables.version>
 
-    <testcontainers.version>1.18.1</testcontainers.version>
+    <testcontainers.version>1.18.3</testcontainers.version>
     <archunit.version>1.0.1</archunit.version>
 
     <spotless.version>2.37.0</spotless.version>
