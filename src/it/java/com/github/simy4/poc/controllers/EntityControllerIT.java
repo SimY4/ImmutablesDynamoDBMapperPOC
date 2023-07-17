@@ -24,8 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@IntegrationTest
-class EntityControllerIT {
+class EntityControllerIT extends IntegrationTest {
 
   private static final String TENANT_ID = UUID.randomUUID().toString();
   private static final String CHANGE_ENTITY_PAYLOAD =
