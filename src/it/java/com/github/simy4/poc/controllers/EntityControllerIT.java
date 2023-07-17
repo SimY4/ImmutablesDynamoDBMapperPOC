@@ -12,8 +12,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
 
-@IntegrationTest
-class EntityControllerIT {
+class EntityControllerIT extends IntegrationTest {
 
   private static final String TENANT_ID = UUID.randomUUID().toString();
   private static final String CHANGE_ENTITY_PAYLOAD =
