@@ -29,14 +29,14 @@ public abstract class Entity {
   public static final String PK_PREFIX = "Entity#";
 
   public static Identity id(String pk, String sk) {
-    return ImmutableIdentity.of(PK_PREFIX + pk, sk);
+    return new Identity(PK_PREFIX + pk, sk);
   }
 
   @Value.Auxiliary
   @JsonIgnore
   @DynamoDBIgnore
   public Identity getId() {
-    return ImmutableIdentity.of(getPk(), getSk());
+    return id(getPk(), getSk());
   }
 
   public abstract String getTenant();
