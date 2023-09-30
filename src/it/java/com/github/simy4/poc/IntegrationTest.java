@@ -15,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 public abstract class IntegrationTest {
   @Container
   static final LocalStackContainer localstack =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:2.2.0"))
+      new LocalStackContainer(DockerImageName.parse("localstack/localstack:2.3.1"))
           .withServices(LocalStackContainer.Service.DYNAMODB);
 
   @DynamicPropertySource
