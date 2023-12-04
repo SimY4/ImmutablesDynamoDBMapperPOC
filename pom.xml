@@ -28,7 +28,7 @@
     <immutables.version>2.10.0</immutables.version>
 
     <testcontainers.version>1.19.3</testcontainers.version>
-    <archunit.version>1.2.0</archunit.version>
+    <archunit.version>1.2.1</archunit.version>
 
     <spotless.version>2.41.1</spotless.version>
     <docker-maven-plugin.version>0.43.4</docker-maven-plugin.version>
