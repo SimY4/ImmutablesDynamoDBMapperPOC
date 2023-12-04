@@ -30,7 +30,7 @@
     <testcontainers.version>1.19.3</testcontainers.version>
     <archunit.version>1.2.0</archunit.version>
 
-    <spotless.version>2.41.0</spotless.version>
+    <spotless.version>2.41.1</spotless.version>
     <docker-maven-plugin.version>0.43.4</docker-maven-plugin.version>
   </properties>
 
