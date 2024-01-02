@@ -116,16 +116,14 @@ public abstract class Entity {
     return UUID.randomUUID().toString();
   }
 
-  @Nullable
-  public abstract Instant getUpdated();
+  @Nullable public abstract Instant getUpdated();
 
   @Value.Default
   public Instant getCreated() {
     return Instant.now();
   }
 
-  @Nullable
-  @JsonIgnore
+  @Nullable @JsonIgnore
   public abstract Long getVersion();
 
   @Override

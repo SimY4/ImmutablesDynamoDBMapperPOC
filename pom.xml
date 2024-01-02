@@ -177,6 +177,7 @@
             <googleJavaFormat/>
             <trimTrailingWhitespace/>
             <removeUnusedImports/>
+            <formatAnnotations/>
 
             <importOrder>
               <order>,javax,java,\#,\#javax,\#java</order>
