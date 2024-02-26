@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>21</java.version>
 
-    <aws-java-sdk.version>2.24.5</aws-java-sdk.version>
+    <aws-java-sdk.version>2.24.10</aws-java-sdk.version>
 
     <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
     <immutables.version>2.10.1</immutables.version>
