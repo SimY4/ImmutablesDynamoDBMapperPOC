@@ -23,6 +23,7 @@ import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClientBuilder;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ResourceInUseException;
 import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbAsyncWaiter;
 
 import java.net.URI;
@@ -93,26 +94,31 @@ public class ImmutablesDynamoDbMapperPocApplication {
   @Profile("local")
   public ApplicationRunner dynamoDBInitializer(
       DynamoDbAsyncClient dynamoDB, DynamoDbAsyncTable<Entity> entityTable) {
-    return args -> {
-      entityTable
-          .createTable(
-              CreateTableEnhancedRequest.builder()
-                  .provisionedThroughput(
-                      ProvisionedThroughput.builder()
-                          .readCapacityUnits(2L)
-                          .writeCapacityUnits(2L)
-                          .build())
-                  .build())
-          .thenAcceptAsync(
-              ignored -> {
-                try (var waiter = DynamoDbAsyncWaiter.builder().client(dynamoDB).build()) {
-                  waiter
-                      .waitUntilTableExists(b -> b.tableName(entityTable.tableName()).build())
-                      .thenAccept(response -> response.matched().response().orElseThrow())
-                      .join();
-                }
-              })
-          .join();
-    };
+    return _ ->
+        entityTable
+            .createTable(
+                CreateTableEnhancedRequest.builder()
+                    .provisionedThroughput(
+                        ProvisionedThroughput.builder()
+                            .readCapacityUnits(2L)
+                            .writeCapacityUnits(2L)
+                            .build())
+                    .build())
+            .handle(
+                (ignored, t) -> {
+                  if (t != null) {
+                    if (t.getCause() instanceof ResourceInUseException) {
+                      return null; // table exists
+                    }
+                    throw new IllegalStateException(t);
+                  }
+                  try (var waiter = DynamoDbAsyncWaiter.builder().client(dynamoDB).build()) {
+                    return waiter
+                        .waitUntilTableExists(b -> b.tableName(entityTable.tableName()).build())
+                        .thenAccept(response -> response.matched().response().orElseThrow())
+                        .join();
+                  }
+                })
+            .join();
   }
 }
