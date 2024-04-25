@@ -11,15 +11,12 @@ import java.util.Optional;
 @Value.Immutable
 @JsonDeserialize(as = ImmutableUpdateEntity.class)
 public interface UpdateEntity {
-  @Nullable
-  String getName();
+  @Nullable String getName();
 
   @Valid
-  @Nullable
-  Address getAddress();
+  @Nullable Address getAddress();
 
-  @Nullable
-  Status getStatus();
+  @Nullable Status getStatus();
 
   default Entity patch(Entity entity) {
     return ImmutableEntity.copyOf(entity)

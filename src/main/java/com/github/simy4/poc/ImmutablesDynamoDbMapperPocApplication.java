@@ -90,7 +90,7 @@ public class ImmutablesDynamoDbMapperPocApplication {
   @Profile("local")
   public ApplicationRunner dynamoDBInitializer(
       AmazonDynamoDBAsync dynamoDB, DynamoDBMapper dynamoDBMapper) {
-    return args -> {
+    return _ -> {
       var request = dynamoDBMapper.generateCreateTableRequest(ModifiableEntity.class);
       TableUtils.createTableIfNotExists(
           dynamoDB, request.withProvisionedThroughput(new ProvisionedThroughput(2L, 2L)));

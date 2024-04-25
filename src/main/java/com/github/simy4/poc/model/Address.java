@@ -16,11 +16,9 @@ import org.springframework.lang.Nullable;
 public interface Address {
   String getLine1();
 
-  @Nullable
-  String getLine2();
+  @Nullable String getLine2();
 
-  @Nullable
-  String getCity();
+  @Nullable String getCity();
 
   String getCountry();
 
