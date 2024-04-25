@@ -1,7 +1,7 @@
 services:
   localstack:
     container_name: dynamodb
-    image: localstack/localstack:3.2.0
+    image: localstack/localstack:3.4.0
     environment:
       - SERVICES=dynamodb
     ports:

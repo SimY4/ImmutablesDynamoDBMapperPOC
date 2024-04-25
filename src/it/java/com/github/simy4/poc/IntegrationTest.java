@@ -15,7 +15,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class IntegrationTest {
   static final LocalStackContainer localstack =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.2.0"))
+      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.4.0"))
           .withServices(LocalStackContainer.Service.DYNAMODB)
           .withReuse(true);
 
@@ -28,6 +28,7 @@ public abstract class IntegrationTest {
   static void init() {
     localstack.start();
     localstack.followOutput(new Slf4jLogConsumer(LoggerFactory.getLogger("localstack")));
+    Runtime.getRuntime().addShutdownHook(new Thread(localstack::stop));
   }
 
   @DynamicPropertySource
