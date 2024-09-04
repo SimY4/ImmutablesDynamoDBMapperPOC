@@ -15,7 +15,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class IntegrationTest {
   static final LocalStackContainer localstack =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.4.0"))
+      new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.7.1"))
           .withServices(LocalStackContainer.Service.DYNAMODB)
           .withReuse(true);
 
