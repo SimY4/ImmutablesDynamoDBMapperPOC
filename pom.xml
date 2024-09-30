@@ -20,7 +20,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>22</java.version>
+    <java.version>23</java.version>
 
     <aws-java-sdk.version>2.28.11</aws-java-sdk.version>
 
@@ -115,6 +115,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <compilerArgs>
+            <compilerArg>-proc:full</compilerArg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
