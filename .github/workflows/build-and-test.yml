@@ -1,6 +1,12 @@
 name: Build and Test
 
-on: [push]
+on:
+  pull_request:
+    branches:
+      - series/**
+  push:
+    branches:
+      - series/**
 
 jobs:
   build:
