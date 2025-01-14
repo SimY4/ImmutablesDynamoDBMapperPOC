@@ -12,11 +12,9 @@ import java.util.List;
 public interface CreateEntity {
   String getName();
 
-  @Valid
-  Address getAddress();
+  @Valid Address getAddress();
 
-  @Valid
-  List<Email> getEmails();
+  @Valid List<Email> getEmails();
 
   Status getStatus();
 
