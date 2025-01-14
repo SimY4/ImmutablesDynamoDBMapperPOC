@@ -26,8 +26,7 @@ public interface Email {
         .build();
   }
 
-  @jakarta.validation.constraints.Email
-  @Value.Parameter
+  @jakarta.validation.constraints.Email @Value.Parameter
   @Value.Redacted
   String getEmail();
 

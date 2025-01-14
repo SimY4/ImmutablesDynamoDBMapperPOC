@@ -13,8 +13,7 @@ import java.util.Optional;
 public interface UpdateEntity {
   @Nullable String getName();
 
-  @Valid
-  @Nullable Address getAddress();
+  @Valid @Nullable Address getAddress();
 
   @Nullable Status getStatus();
 
