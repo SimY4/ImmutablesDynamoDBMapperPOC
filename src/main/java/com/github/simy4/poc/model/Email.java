@@ -13,8 +13,7 @@ import org.immutables.value.Value;
 @DynamoDBTypeConverted(converter = Email.Converter.class)
 @JsonDeserialize(as = ImmutableEmail.class)
 public interface Email {
-  @jakarta.validation.constraints.Email
-  @Value.Parameter
+  @jakarta.validation.constraints.Email @Value.Parameter
   @Value.Redacted
   String getEmail();
 
