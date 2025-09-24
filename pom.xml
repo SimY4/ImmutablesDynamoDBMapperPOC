@@ -20,7 +20,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>23</java.version>
+    <java.version>25</java.version>
 
     <aws-java-sdk.version>2.34.0</aws-java-sdk.version>
 
@@ -178,7 +178,9 @@
               <include>src/it/java/**/*.java</include>
             </includes>
 
-            <googleJavaFormat/>
+            <googleJavaFormat>
+              <version>1.28.0</version>
+            </googleJavaFormat>
             <trimTrailingWhitespace/>
             <removeUnusedImports/>
             <formatAnnotations/>
