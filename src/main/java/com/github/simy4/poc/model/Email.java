@@ -1,42 +1,27 @@
 package com.github.simy4.poc.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
+import org.jspecify.annotations.NullMarked;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
-@Data
-@Value.Immutable
-@JsonDeserialize(as = ImmutableEmail.class)
-public interface Email {
+@NullMarked
+@Value.Builder
+public record Email(@jakarta.validation.constraints.Email String email, boolean verified, boolean primary) {
   static TableSchema<Email> schema() {
-    return TableSchema.builder(Email.class, ImmutableEmail.Builder.class)
-        .newItemBuilder(ImmutableEmail::builder, ImmutableEmail.Builder::build)
+    return TableSchema.builder(Email.class, EmailBuilder.class)
+        .newItemBuilder(EmailBuilder::new, EmailBuilder::build)
         .addAttribute(
             String.class,
-            a -> a.name("email").getter(Email::getEmail).setter(ImmutableEmail.Builder::email))
+            a -> a.name("email").getter(Email::email).setter(EmailBuilder::email))
         .addAttribute(
             Boolean.class,
             a ->
                 a.name("verified")
-                    .getter(Email::isVerified)
-                    .setter(ImmutableEmail.Builder::verified))
+                    .getter(Email::verified)
+                    .setter(EmailBuilder::verified))
         .addAttribute(
             Boolean.class,
-            a -> a.name("primary").getter(Email::isPrimary).setter(ImmutableEmail.Builder::primary))
+            a -> a.name("primary").getter(Email::primary).setter(EmailBuilder::primary))
         .build();
-  }
-
-  @jakarta.validation.constraints.Email @Value.Parameter
-  @Value.Redacted
-  String getEmail();
-
-  @Value.Default
-  default boolean isVerified() {
-    return false;
-  }
-
-  @Value.Default
-  default boolean isPrimary() {
-    return false;
   }
 }

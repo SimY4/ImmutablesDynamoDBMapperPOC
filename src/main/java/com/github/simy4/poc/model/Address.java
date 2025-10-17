@@ -1,40 +1,25 @@
 package com.github.simy4.poc.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
-@Data
-@Value.Immutable
-@JsonDeserialize(as = ImmutableAddress.class)
-public interface Address {
-  static TableSchema<Address> schema() {
-    return TableSchema.builder(Address.class, ImmutableAddress.Builder.class)
-        .newItemBuilder(ImmutableAddress::builder, ImmutableAddress.Builder::build)
+@NullMarked
+@Value.Builder
+public record Address(String line1, @Nullable String line2, @Nullable String city, String country) {
+  public static TableSchema<Address> schema() {
+    return TableSchema.builder(Address.class, AddressBuilder.class)
+        .newItemBuilder(AddressBuilder::new, AddressBuilder::build)
+        .addAttribute(
+            String.class, a -> a.name("line1").getter(Address::line1).setter(AddressBuilder::line1))
+        .<@Nullable String>addAttribute(
+            String.class, a -> a.name("line2").getter(Address::line2).setter(AddressBuilder::line2))
+        .<@Nullable String>addAttribute(
+            String.class, a -> a.name("city").getter(Address::city).setter(AddressBuilder::city))
         .addAttribute(
             String.class,
-            a -> a.name("line1").getter(Address::getLine1).setter(ImmutableAddress.Builder::line1))
-        .addAttribute(
-            String.class,
-            a -> a.name("line2").getter(Address::getLine2).setter(ImmutableAddress.Builder::line2))
-        .addAttribute(
-            String.class,
-            a -> a.name("city").getter(Address::getCity).setter(ImmutableAddress.Builder::city))
-        .addAttribute(
-            String.class,
-            a ->
-                a.name("country")
-                    .getter(Address::getCountry)
-                    .setter(ImmutableAddress.Builder::country))
+            a -> a.name("country").getter(Address::country).setter(AddressBuilder::country))
         .build();
   }
-
-  String getLine1();
-
-  @Nullable String getLine2();
-
-  @Nullable String getCity();
-
-  String getCountry();
 }

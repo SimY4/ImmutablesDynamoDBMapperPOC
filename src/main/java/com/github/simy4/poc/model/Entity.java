@@ -34,7 +34,7 @@ public abstract class Entity {
             EnhancedType.documentOf(Address.class, Address.schema()),
             a ->
                 a.name("address")
-                    .getter(e -> ImmutableAddress.copyOf(e.getAddress()))
+                    .getter(Entity::getAddress)
                     .setter(ImmutableEntity.Builder::address))
         .addAttribute(
             EnhancedType.listOf(EnhancedType.documentOf(Email.class, Email.schema())),

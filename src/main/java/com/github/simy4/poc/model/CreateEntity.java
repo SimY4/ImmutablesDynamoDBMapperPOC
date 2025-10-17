@@ -1,30 +1,20 @@
 package com.github.simy4.poc.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.Valid;
-import org.immutables.value.Value;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
-@Data
-@Value.Immutable
-@JsonDeserialize(as = ImmutableCreateEntity.class)
-public interface CreateEntity {
-  String getName();
-
-  @Valid Address getAddress();
-
-  @Valid List<Email> getEmails();
-
-  Status getStatus();
-
-  default Entity toEntity(String tenant) {
+@NullMarked
+public record CreateEntity(
+    String name, @Valid Address address, @Valid List<Email> emails, Status status) {
+  public Entity toEntity(String tenant) {
     return ImmutableEntity.builder()
         .tenant(tenant)
-        .name(getName())
-        .address(getAddress())
-        .status(getStatus())
-        .addAllEmails(getEmails())
+        .name(name())
+        .address(address())
+        .status(status())
+        .addAllEmails(emails())
         .build();
   }
 }
