@@ -27,7 +27,7 @@
     <springdoc-openapi.version>2.8.13</springdoc-openapi.version>
     <immutables.version>2.11.6</immutables.version>
 
-    <testcontainers.version>1.21.3</testcontainers.version>
+    <testcontainers.version>2.0.0</testcontainers.version>
     <archunit.version>1.4.1</archunit.version>
 
     <spotless.version>3.0.0</spotless.version>
@@ -99,7 +99,7 @@
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>localstack</artifactId>
+      <artifactId>testcontainers-localstack</artifactId>
       <version>${testcontainers.version}</version>
     </dependency>
     <dependency>
