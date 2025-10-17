@@ -6,8 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
@@ -15,8 +15,8 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class IntegrationTest {
   static final LocalStackContainer localstack =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:4.7.0"))
-          .withServices(LocalStackContainer.Service.DYNAMODB)
+      new LocalStackContainer(DockerImageName.parse("localstack/localstack:4.9.0"))
+          .withServices("dynamodb")
           .withReuse(true);
 
   static {
@@ -36,8 +36,6 @@ public abstract class IntegrationTest {
     registry.add("spring.cloud.aws.credentials.access-key", localstack::getAccessKey);
     registry.add("spring.cloud.aws.credentials.secret-key", localstack::getSecretKey);
     registry.add("spring.cloud.aws.region.static", localstack::getRegion);
-    registry.add(
-        "spring.cloud.aws.dynamodb.endpoint",
-        () -> localstack.getEndpointOverride(LocalStackContainer.Service.DYNAMODB));
+    registry.add("spring.cloud.aws.dynamodb.endpoint", localstack::getEndpoint);
   }
 }
