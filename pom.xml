@@ -177,9 +177,7 @@
               <include>src/it/java/**/*.java</include>
             </includes>
 
-            <googleJavaFormat>
-              <version>1.28.0</version>
-            </googleJavaFormat>
+            <googleJavaFormat/>
             <trimTrailingWhitespace/>
             <removeUnusedImports/>
             <formatAnnotations/>
