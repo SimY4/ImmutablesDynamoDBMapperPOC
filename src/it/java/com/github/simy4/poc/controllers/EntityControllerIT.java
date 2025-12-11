@@ -1,6 +1,5 @@
 package com.github.simy4.poc.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.simy4.poc.IntegrationTest;
 import com.github.simy4.poc.model.Entity;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;

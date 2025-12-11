@@ -2,9 +2,9 @@ package com.github.simy4.poc.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.simy4.poc.model.converters.DynamoDBTypeConverterIso;
 import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 @Data
 @Value.Immutable
