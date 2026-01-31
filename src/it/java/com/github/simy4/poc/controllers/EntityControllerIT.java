@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.UUID;
@@ -48,7 +49,7 @@ class EntityControllerIT extends IntegrationTest {
             e -> e.expectHeader().valueEquals(HttpHeaders.ETAG, "\"1\""),
             e -> e.expectHeader().exists(HttpHeaders.LOCATION))
         .expectBody()
-        .json(CHANGE_ENTITY_PAYLOAD, false)
+        .json(CHANGE_ENTITY_PAYLOAD, JsonCompareMode.LENIENT)
         .returnResult();
   }
 
@@ -84,7 +85,7 @@ class EntityControllerIT extends IntegrationTest {
               e -> e.expectStatus().isOk(),
               e -> e.expectHeader().valueEquals(HttpHeaders.ETAG, "\"1\""))
           .expectBody()
-          .json(CHANGE_ENTITY_PAYLOAD, false);
+          .json(CHANGE_ENTITY_PAYLOAD, JsonCompareMode.LENIENT);
       client
           .get()
           .uri("/v1/entities/{id}", entity.getId().getSk())
@@ -110,7 +111,7 @@ class EntityControllerIT extends IntegrationTest {
           .expectStatus()
           .isOk()
           .expectBody()
-          .json("{\"name\":\"other-name\"}", false);
+          .json("{\"name\":\"other-name\"}", JsonCompareMode.LENIENT);
     }
 
     @Test

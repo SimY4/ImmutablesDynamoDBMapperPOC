@@ -3,6 +3,7 @@ package com.github.simy4.poc.controllers;
 import com.github.simy4.poc.model.CreateEntity;
 import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
+import com.github.simy4.poc.model.ImmutableEntity;
 import com.github.simy4.poc.model.UpdateEntity;
 import com.github.simy4.poc.repositories.CrudRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,10 +36,10 @@ import java.util.Objects;
 @RequestMapping("/v1/entities")
 public class EntityController {
 
-  private final CrudRepository<Entity, Identity> crudRepository;
+  private final CrudRepository<ImmutableEntity, Identity> crudRepository;
 
   @Autowired
-  public EntityController(CrudRepository<Entity, Identity> crudRepository) {
+  public EntityController(CrudRepository<ImmutableEntity, Identity> crudRepository) {
     this.crudRepository = crudRepository;
   }
 
@@ -74,7 +75,7 @@ public class EntityController {
             headers = {@Header(name = HttpHeaders.ETAG)}),
         @ApiResponse(responseCode = "404", content = @Content)
       })
-  public Mono<ResponseEntity<Entity>> getEntity(
+  public Mono<ResponseEntity<ImmutableEntity>> getEntity(
       @RequestHeader("X-tenant-id") String tenant, @PathVariable("id") String id) {
     return Mono.fromFuture(crudRepository.get(Entity.id(tenant, id)))
         .flatMap(Mono::justOrEmpty)
@@ -93,7 +94,7 @@ public class EntityController {
             headers = {@Header(name = HttpHeaders.ETAG)}),
         @ApiResponse(responseCode = "404", content = @Content)
       })
-  public Mono<ResponseEntity<Entity>> updateEntity(
+  public Mono<ResponseEntity<ImmutableEntity>> updateEntity(
       @RequestHeader("X-tenant-id") String tenant,
       @PathVariable("id") String id,
       @Valid @RequestBody UpdateEntity entity) {
