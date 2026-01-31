@@ -1,7 +1,7 @@
 package com.github.simy4.poc.repositories;
 
-import com.github.simy4.poc.model.Entity;
 import com.github.simy4.poc.model.Identity;
+import com.github.simy4.poc.model.ImmutableEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
@@ -12,11 +12,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 @Repository
-public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
-  private final DynamoDbAsyncTable<Entity> dynamoDBTable;
+public class EntityCrudRepository implements CrudRepository<ImmutableEntity, Identity> {
+  private final DynamoDbAsyncTable<ImmutableEntity> dynamoDBTable;
 
   @Autowired
-  public EntityCrudRepository(DynamoDbAsyncTable<Entity> entityTable) {
+  public EntityCrudRepository(DynamoDbAsyncTable<ImmutableEntity> entityTable) {
     this.dynamoDBTable = entityTable;
   }
 
@@ -25,12 +25,12 @@ public class EntityCrudRepository implements CrudRepository<Entity, Identity> {
   }
 
   @Override
-  public final CompletableFuture<Entity> save(Entity entity) {
+  public final CompletableFuture<ImmutableEntity> save(ImmutableEntity entity) {
     return dynamoDBTable.updateItem(entity).thenApply(Function.identity());
   }
 
   @Override
-  public final CompletableFuture<Optional<Entity>> get(Identity id) {
+  public final CompletableFuture<Optional<ImmutableEntity>> get(Identity id) {
     return dynamoDBTable.getItem(fromId(id)).thenApply(Optional::ofNullable);
   }
 

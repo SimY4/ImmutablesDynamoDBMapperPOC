@@ -115,8 +115,16 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerArgs>
-            <compilerArg>-proc:full</compilerArg>
+            <arg>-Xlint:all,-processing</arg>
+            <arg>-Werror</arg>
           </compilerArgs>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.immutables</groupId>
+              <artifactId>value</artifactId>
+              <version>${immutables.version}</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
       <plugin>

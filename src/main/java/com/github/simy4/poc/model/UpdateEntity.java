@@ -9,10 +9,16 @@ import java.util.Optional;
 @NullMarked
 public record UpdateEntity(
     @Nullable String name, @Valid @Nullable Address address, @Nullable Status status) {
-  public Entity patch(Entity entity) {
-    return ImmutableEntity.copyOf(entity)
-        .withName(Optional.ofNullable(name()).orElseGet(entity::getName))
-        .withAddress(Optional.ofNullable(address()).orElseGet(entity::getAddress))
-        .withStatus(Optional.ofNullable(status()).orElseGet(entity::getStatus));
+  public ImmutableEntity patch(ImmutableEntity entity) {
+    return ImmutableEntity.builder()
+        .name(Optional.ofNullable(name).orElseGet(entity::getName))
+        .address(Optional.ofNullable(address).orElseGet(entity::getAddress))
+        .status(Optional.ofNullable(status).orElseGet(entity::getStatus))
+        .tenant(entity.getTenant())
+        .sk(entity.getSk())
+        .emails(entity.getEmails())
+        .version(entity.getVersion())
+        .created(entity.getCreated())
+        .build();
   }
 }
