@@ -2,7 +2,7 @@ package com.github.simy4.poc.model;
 
 import jakarta.validation.Valid;
 import org.immutables.value.Value;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Optional;

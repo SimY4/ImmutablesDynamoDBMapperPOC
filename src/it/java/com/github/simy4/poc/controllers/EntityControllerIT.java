@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
@@ -65,7 +66,7 @@ class EntityControllerIT extends IntegrationTest {
         .andExpect(status().isCreated())
         .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
         .andExpect(header().exists(HttpHeaders.LOCATION))
-        .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
+        .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, JsonCompareMode.LENIENT));
   }
 
   @Nested
@@ -99,7 +100,7 @@ class EntityControllerIT extends IntegrationTest {
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
-          .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, false));
+          .andExpect(content().json(CHANGE_ENTITY_PAYLOAD, JsonCompareMode.LENIENT));
       mockMvc
           .perform(
               get("/v1/entities/{id}", entity.getId().getSk())
@@ -118,7 +119,7 @@ class EntityControllerIT extends IntegrationTest {
                   .contentType(MediaType.APPLICATION_JSON)
                   .content("{\"name\":\"other-name\"}"))
           .andExpect(status().isOk())
-          .andExpect(content().json("{\"name\":\"other-name\"}", false));
+          .andExpect(content().json("{\"name\":\"other-name\"}", JsonCompareMode.LENIENT));
     }
 
     @Test

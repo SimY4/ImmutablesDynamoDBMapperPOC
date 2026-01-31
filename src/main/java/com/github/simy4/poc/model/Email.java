@@ -12,6 +12,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @DynamoDBDocument
 @DynamoDBTypeConverted(converter = Email.Converter.class)
 @JsonDeserialize(as = ImmutableEmail.class)
+@SuppressWarnings("this-escape")
 public interface Email {
   @jakarta.validation.constraints.Email @Value.Parameter
   @Value.Redacted
