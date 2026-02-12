@@ -31,7 +31,7 @@
     <archunit.version>1.4.1</archunit.version>
 
     <spotless.version>3.2.1</spotless.version>
-    <docker-maven-plugin.version>0.48.0</docker-maven-plugin.version>
+    <docker-maven-plugin.version>0.48.1</docker-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
