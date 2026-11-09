@@ -95,23 +95,17 @@ public class ImmutablesDynamoDbMapperPocApplication {
       DynamoDbAsyncClient dynamoDB, DynamoDbAsyncTable<ImmutableEntity> entityTable) {
     return _ ->
         entityTable
-            .createTable(
-                b ->
-                    b.provisionedThroughput(
-                        tpt -> tpt.readCapacityUnits(2L).writeCapacityUnits(2L)))
-            .thenCompose(
-                ignored ->
-                    dynamoDB
-                        .waiter()
-                        .waitUntilTableExists(b -> b.tableName(entityTable.tableName())))
+            .createTable(b ->
+                b.provisionedThroughput(tpt -> tpt.readCapacityUnits(2L).writeCapacityUnits(2L)))
+            .thenCompose(ignored ->
+                dynamoDB.waiter().waitUntilTableExists(b -> b.tableName(entityTable.tableName())))
             .thenAccept(response -> response.matched().response().orElseThrow())
-            .exceptionally(
-                t -> {
-                  if (t.getCause() instanceof ResourceInUseException) {
-                    return null; // table exists
-                  }
-                  throw new IllegalStateException(t);
-                })
+            .exceptionally(t -> {
+              if (t.getCause() instanceof ResourceInUseException) {
+                return null; // table exists
+              }
+              throw new IllegalStateException(t);
+            })
             .join();
   }
 }

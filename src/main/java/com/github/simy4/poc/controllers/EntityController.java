@@ -56,15 +56,11 @@ public class EntityController {
       @Valid @RequestBody CreateEntity entity,
       UriComponentsBuilder componentsBuilder) {
     return Mono.fromFuture(crudRepository.save(entity.toEntity(tenant)))
-        .map(
-            created ->
-                ResponseEntity.created(
-                        componentsBuilder
-                            .path("/{id}")
-                            .buildAndExpand(created.getId().getSk())
-                            .toUri())
-                    .eTag(Objects.toString(created.getVersion(), "0"))
-                    .body(created));
+        .map(created ->
+            ResponseEntity.created(
+                    componentsBuilder.path("/{id}").buildAndExpand(created.getId().getSk()).toUri())
+                .eTag(Objects.toString(created.getVersion(), "0"))
+                .body(created));
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,9 +97,8 @@ public class EntityController {
     return Mono.fromFuture(crudRepository.get(Entity.id(tenant, id)))
         .flatMap(Mono::justOrEmpty)
         .flatMap(e -> Mono.fromFuture(crudRepository.save(entity.patch(e))))
-        .map(
-            updated ->
-                ResponseEntity.ok().eTag(Objects.toString(updated.getVersion(), "0")).body(updated))
+        .map(updated ->
+            ResponseEntity.ok().eTag(Objects.toString(updated.getVersion(), "0")).body(updated))
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
 
